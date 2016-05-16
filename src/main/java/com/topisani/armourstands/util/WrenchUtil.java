@@ -1,12 +1,14 @@
 package com.topisani.armourstands.util;
 
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Rotations;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.Vec3d;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * @author topisani
@@ -15,6 +17,7 @@ public class WrenchUtil {
 
     public final static Item WRENCH_ITEM = Items.WOODEN_SHOVEL;
     private final static String modeKey = "mode";
+    private final static HashMap<UUID, Byte> playerModes = new HashMap<>();
 
     public enum WrenchMode {
         X(0),
@@ -40,25 +43,21 @@ public class WrenchUtil {
         }
     }
 
-    public static WrenchMode getMode(ItemStack wrench) {
+    public static WrenchMode getMode(EntityPlayer player) {
         try {
-            return WrenchMode.fromByte(wrench
-                .getTagCompound()
-                .getByte(modeKey));
+            return WrenchMode.fromByte(playerModes.get(player.getUniqueID()));
         } catch(NullPointerException e) {
             return WrenchMode.X;
         }
     }
 
-    public static void setMode(ItemStack wrench, WrenchMode mode) {
-        if (!wrench.hasTagCompound()) wrench.setTagCompound(new NBTTagCompound());
-        wrench.getTagCompound().setByte(modeKey, mode.byteVal);
+    public static void setMode(EntityPlayer player, WrenchMode mode) {
+        playerModes.put(player.getUniqueID(), mode.byteVal);
     }
 
-    public static Rotations rotate(Rotations in, ItemStack wrench, EntityPlayer player, boolean back) {
-        if (wrench.getItem() != WRENCH_ITEM) return in;
+    private static Rotations calcRotation(Rotations in, EntityPlayer player, boolean back) {
         float addend = (back) ? -10f : 10f;
-        switch (getMode(wrench)) {
+        switch (getMode(player)) {
             case X:
                 in = new Rotations(in.getX() + addend, in.getY(), in.getZ());
                 break;
@@ -69,7 +68,27 @@ public class WrenchUtil {
                 in = new Rotations(in.getX(), in.getY(), in.getZ() + addend);
                 break;
         }
-        player.addChatMessage(new TextComponentString(in.getX() + "," + in.getY() + "," + in.getZ()));
         return in;
+    }
+
+    public static void rotate(EntityArmorStand armorStand, EntityPlayer player, Vec3d clickPos, boolean back) {
+        switch (RotationPoint.closest(clickPos)) {
+            case HEAD:
+                armorStand.setHeadRotation(WrenchUtil.calcRotation(armorStand.getHeadRotation(), player, back));
+                break;
+            case LEFT_ARM:
+                armorStand.setLeftArmRotation(WrenchUtil.calcRotation(armorStand.getLeftArmRotation(), player, back));
+                break;
+            case RIGHT_ARM:
+                armorStand.setRightArmRotation(WrenchUtil.calcRotation(armorStand.getRightArmRotation(), player, back));
+                break;
+            case LEFT_LEG:
+                armorStand.setLeftLegRotation(WrenchUtil.calcRotation(armorStand.getLeftLegRotation(), player, back));
+                break;
+            case RIGHT_LEG:
+                armorStand.setRightLegRotation(WrenchUtil.calcRotation(armorStand.getRightLegRotation(), player, back));
+                break;
+
+        }
     }
 }
