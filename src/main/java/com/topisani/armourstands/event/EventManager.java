@@ -12,7 +12,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static net.minecraft.entity.item.EntityArmorStand.STATUS;
 
@@ -22,8 +21,8 @@ import static net.minecraft.entity.item.EntityArmorStand.STATUS;
 public class EventManager {
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
-    @SideOnly(Side.SERVER)
     public void onPlayerClick(PlayerInteractEvent.EntityInteractSpecific event) {
+        if (event.getSide() == Side.CLIENT) return;
         if (event.getTarget() instanceof EntityArmorStand) {
             EntityArmorStand armorStand = (EntityArmorStand) event.getTarget();
             ItemStack item = event.getItemStack();
@@ -33,9 +32,9 @@ public class EventManager {
             // Add Arms
             if (!armorStand.getShowArms()) {
                 if (!player.isSneaking()) {
-                    if (item.getItem() == Items.STICK && event.getItemStack().stackSize >= 2) {
+                    if (item.getItem() == Items.STICK && (item.stackSize >= 2 || player.isCreative())) {
                         armorStand.getDataManager().set(STATUS, this.setBit(armorStand.getDataManager().get(STATUS), 4, true));
-                        event.getItemStack().stackSize -= 2;
+                        if (!player.isCreative()) item.stackSize -= 2;
                         event.setCanceled(true);
                     }
                 }
@@ -59,11 +58,11 @@ public class EventManager {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.SERVER)
     public void onRightClick(PlayerInteractEvent.RightClickItem event) {
+        if (event.getSide() == Side.CLIENT) return;
         if (event.getItemStack().getItem() == WrenchUtil.WRENCH_ITEM && event.getEntityPlayer().isSneaking()) {
             WrenchUtil.setMode(event.getEntityPlayer(), WrenchUtil.WrenchMode.fromByte((byte) (WrenchUtil.getMode(event.getEntityPlayer()).byteVal + 1)));
-            event.getEntityPlayer().addChatMessage(new TextComponentString("Mode: " + WrenchUtil.getMode(event.getEntityPlayer()).name()));
+            event.getEntityPlayer().addChatMessage(new TextComponentString("ARMourstands wrench mode: " + WrenchUtil.getMode(event.getEntityPlayer()).name()));
             event.setCanceled(true);
         }
     }

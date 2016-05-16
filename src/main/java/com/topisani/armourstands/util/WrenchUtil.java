@@ -16,7 +16,7 @@ import java.util.UUID;
 public class WrenchUtil {
 
     public final static Item WRENCH_ITEM = Items.WOODEN_SHOVEL;
-    private final static String modeKey = "mode";
+    public final static float INCREMENT = 7.5f;
     private final static HashMap<UUID, Byte> playerModes = new HashMap<>();
 
     public enum WrenchMode {
@@ -56,7 +56,7 @@ public class WrenchUtil {
     }
 
     private static Rotations calcRotation(Rotations in, EntityPlayer player, boolean back) {
-        float addend = (back) ? -10f : 10f;
+        float addend = (back) ? -INCREMENT : INCREMENT;
         switch (getMode(player)) {
             case X:
                 in = new Rotations(in.getX() + addend, in.getY(), in.getZ());
@@ -72,7 +72,8 @@ public class WrenchUtil {
     }
 
     public static void rotate(EntityArmorStand armorStand, EntityPlayer player, Vec3d clickPos, boolean back) {
-        switch (RotationPoint.closest(clickPos)) {
+        RotationPoint closest = RotationPoint.closest(clickPos, armorStand.rotationYaw);
+        switch (closest) {
             case HEAD:
                 armorStand.setHeadRotation(WrenchUtil.calcRotation(armorStand.getHeadRotation(), player, back));
                 break;
@@ -88,7 +89,9 @@ public class WrenchUtil {
             case RIGHT_LEG:
                 armorStand.setRightLegRotation(WrenchUtil.calcRotation(armorStand.getRightLegRotation(), player, back));
                 break;
-
+            case BASE:
+                float addend = (back) ? -INCREMENT : INCREMENT;
+                armorStand.rotationYaw += addend;
         }
     }
 }
