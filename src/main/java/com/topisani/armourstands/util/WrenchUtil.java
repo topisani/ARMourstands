@@ -2,7 +2,7 @@ package com.topisani.armourstands.util;
 
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.Rotations;
 import net.minecraft.util.math.Vec3d;
@@ -15,8 +15,8 @@ import java.util.UUID;
  */
 public class WrenchUtil {
 
-    public final static Item WRENCH_ITEM = Items.WOODEN_SHOVEL;
-    public final static float INCREMENT = 7.5f;
+    public static Item[] WRENCH_ITEMS = {Item.getItemFromBlock(Blocks.LEVER)};
+    public static float INCREMENT = 7.5f;
     private final static HashMap<UUID, Byte> playerModes = new HashMap<>();
 
     public enum WrenchMode {
@@ -93,5 +93,12 @@ public class WrenchUtil {
                 float addend = (back) ? -INCREMENT : INCREMENT;
                 armorStand.rotationYaw += addend;
         }
+    }
+
+    public static boolean isWrench(Item item) {
+        for (Item wrench : WRENCH_ITEMS) {
+            if(item.equals(wrench)) return true;
+        }
+        return false;
     }
 }

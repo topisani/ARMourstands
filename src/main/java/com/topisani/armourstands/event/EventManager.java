@@ -40,7 +40,7 @@ public class EventManager {
                 }
             }
             // Rotate parts
-            if (item.getItem() == WrenchUtil.WRENCH_ITEM) {
+            if (WrenchUtil.isWrench(item.getItem())) {
                 WrenchUtil.rotate(armorStand, player, pos, player.isSneaking());
                 event.setCanceled(true);
             }
@@ -60,7 +60,7 @@ public class EventManager {
     @SubscribeEvent
     public void onRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getSide() == Side.CLIENT) return;
-        if (event.getItemStack().getItem() == WrenchUtil.WRENCH_ITEM && event.getEntityPlayer().isSneaking()) {
+        if (WrenchUtil.isWrench(event.getItemStack().getItem()) && event.getEntityPlayer().isSneaking()) {
             WrenchUtil.setMode(event.getEntityPlayer(), WrenchUtil.WrenchMode.fromByte((byte) (WrenchUtil.getMode(event.getEntityPlayer()).byteVal + 1)));
             event.getEntityPlayer().addChatMessage(new TextComponentString("ARMourstands wrench mode: " + WrenchUtil.getMode(event.getEntityPlayer()).name()));
             event.setCanceled(true);
