@@ -78,16 +78,16 @@ public class WrenchUtil {
                 armorStand.setHeadRotation(WrenchUtil.calcRotation(armorStand.getHeadRotation(), player, back));
                 break;
             case LEFT_ARM:
-                armorStand.setLeftArmRotation(WrenchUtil.calcRotation(armorStand.getLeftArmRotation(), player, back));
+                armorStand.setLeftArmRotation(WrenchUtil.calcRotation(armorStand.getDataManager().get(EntityArmorStand.LEFT_ARM_ROTATION), player, back));
                 break;
             case RIGHT_ARM:
-                armorStand.setRightArmRotation(WrenchUtil.calcRotation(armorStand.getRightArmRotation(), player, back));
+                armorStand.setRightArmRotation(WrenchUtil.calcRotation(armorStand.getDataManager().get(EntityArmorStand.RIGHT_ARM_ROTATION), player, back));
                 break;
             case LEFT_LEG:
-                armorStand.setLeftLegRotation(WrenchUtil.calcRotation(armorStand.getLeftLegRotation(), player, back));
+                armorStand.setLeftLegRotation(WrenchUtil.calcRotation(armorStand.getDataManager().get(EntityArmorStand.LEFT_LEG_ROTATION), player, back));
                 break;
             case RIGHT_LEG:
-                armorStand.setRightLegRotation(WrenchUtil.calcRotation(armorStand.getRightLegRotation(), player, back));
+                armorStand.setRightLegRotation(WrenchUtil.calcRotation(armorStand.getDataManager().get(EntityArmorStand.RIGHT_LEG_ROTATION), player, back));
                 break;
             case BASE:
                 float addend = (back) ? -INCREMENT : INCREMENT;
